@@ -149,10 +149,12 @@ export class ChatService {
               select: {
                 id: true,
                 lastOnline: true,
+                fullName: true,
               },
             },
             messages: {
               select: {
+                id: true,
                 sentDateTime: true,
                 messageType: true,
                 messageContent: true,
@@ -168,13 +170,6 @@ export class ChatService {
     const nonEmptyChats = userChats.chats.filter(
       (chat) => chat.messages.length > 0
     );
-
-    return nonEmptyChats.map((userChat) => {
-      const unreadReceivedMessages = userChat.messages.filter(
-        (message) => message.receiverId === userId
-      );
-
-      return { ...userChat, countOfUnread: unreadReceivedMessages.length };
-    });
+    return nonEmptyChats;
   }
 }

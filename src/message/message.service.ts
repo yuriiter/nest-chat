@@ -8,7 +8,7 @@ export class MessageService {
 
   async create(createMessageDto: CreateMessageDto, userId: number) {
     try {
-      this.prismaService.message.create({
+      const newMessage = await this.prismaService.message.create({
         data: {
           messageContent: createMessageDto.messageContent,
           messageType: createMessageDto.messageType,
@@ -24,7 +24,8 @@ export class MessageService {
         },
       });
 
-      const {users, countOfNewMessagesToUsers } = await this.prismaService.chat.findUnique({
+      const { users, countOfNewMessagesToUsers } =
+        await this.prismaService.chat.findUnique({
         where: {
           id: createMessageDto.chatId,
         },

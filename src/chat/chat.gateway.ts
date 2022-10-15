@@ -3,7 +3,7 @@ import {
   MessageBody, OnGatewayConnection, OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
+  WebSocketServer, WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { CreateMessageDto } from '../message/dto/create-message.dto';
@@ -29,7 +29,7 @@ export class ChatGateway
 
   @WebSocketServer()
   server: Server;
-  clients: Socket[] = [];
+  users
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
@@ -37,13 +37,13 @@ export class ChatGateway
     });
   }
 
-  @SubscribeMessage('newMessage')
-  async onNewMessage(
+  @SubscribeMessage('status')
+  async onStatus(
     @MessageBody()
-    createMessageDto: CreateMessageDto & { userId: number }
+      createMessageDto: any
   ) {
-    console.log(createMessageDto);
-    const { socketIds } = await this.prismaService.user.findUnique({
+    const { userId, socketId } = createMessageDto;
+    const receiverUser = await this.prismaService.user.findUnique({
       where: {
         id: createMessageDto.receiverId,
       },
@@ -51,7 +51,68 @@ export class ChatGateway
         socketIds: true,
       },
     });
+    if(!receiverUser) {
+      throw new WsException("User not found");
+    }
 
+    const { socketIds } = receiverUser;
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    socketIds.push(socketId);
+
+    await this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        socketIds: socketIds,
+      },
+    });
+
+    this.server
+      .to(socketIds)
+      .emit(
+        'onStatus',
+        this.messageService.create(createMessageDto, createMessageDto.userId)
+      );
+  }
+
+  @SubscribeMessage('newMessage')
+  async onNewMessage(
+    @MessageBody()
+    createMessageDto: any
+  ) {
+    const { userId, socketId } = createMessageDto;
+    const receiverUser = await this.prismaService.user.findUnique({
+      where: {
+        id: createMessageDto.receiverId,
+      },
+      select: {
+        socketIds: true,
+      },
+    });
+    if(!receiverUser) {
+      throw new WsException("User not found");
+    }
+
+    const { socketIds } = receiverUser;
+
+    socketIds.push(socketId);
+
+    await this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        socketIds: socketIds,
+      },
+    });
+
+    console.log(socketIds);
     this.server
       .to(socketIds)
       .emit(
@@ -61,7 +122,7 @@ export class ChatGateway
   }
 
   async handleDisconnect(client: Socket) {
-    const { socketIds } = await this.prismaService.user.findFirst({
+    const user = await this.prismaService.user.findFirst({
       where: {
         socketIds: {
           has: client.id,
@@ -71,6 +132,11 @@ export class ChatGateway
         socketIds: true,
       },
     });
+    if (!user) {
+      return;
+    }
+
+    const socketIds = user.socketIds;
 
     const newSocketIds = socketIds.filter((socketId) => socketId !== client.id);
     await this.prismaService.user.updateMany({

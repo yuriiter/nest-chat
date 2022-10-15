@@ -21,24 +21,8 @@ export class WsGuard implements CanActivate {
         this.configService.get('JWT_SECRET')
       ) as any;
 
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          id: decoded.sub,
-        },
-      });
-      const socketIds = user.socketIds;
-      socketIds.push(clientSocketId);
-
-      await this.prismaService.user.update({
-        where: {
-          id: decoded.sub,
-        },
-        data: {
-          socketIds: socketIds,
-        },
-      });
-
       context.switchToWs().getData().userId = decoded.sub;
+      context.switchToWs().getData().socketId = context.args[0].client.id;
 
       return await this.validate(decoded);
     } catch (ex) {
