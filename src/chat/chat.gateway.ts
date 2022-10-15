@@ -29,11 +29,11 @@ export class ChatGateway
 
   @WebSocketServer()
   server: Server;
-  users
+  usersToSocketIds: { userId: number; socketIds: string[] }[];
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
-      this.clients.push(socket);
+      console.log(socket);
     });
   }
 
@@ -47,29 +47,32 @@ export class ChatGateway
       where: {
         id: createMessageDto.receiverId,
       },
-      select: {
-        socketIds: true,
-      },
     });
-    if(!receiverUser) {
+
+    if (!receiverUser) {
       throw new WsException("User not found");
     }
 
-    const { socketIds } = receiverUser;
-
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        id: userId,
-      },
+    const searchedUserToSocketIds = this.usersToSocketIds.find((userToSocketIds) => {
+      return userToSocketIds.userId === userId
     });
-    socketIds.push(socketId);
 
-    await this.prismaService.user.update({
+    if (!searchedUserToSocketIds) {
+      this.usersToSocketIds.push({
+        userId: userId as number,
+        socketIds: [] as string[],
+      });
+    }
+    else {
+      searchedUserToSocketIds.socketIds.push(socketId);
+    }
+
+    await this.prismaservice.user.update({
       where: {
-        id: userId,
+        id: userid,
       },
       data: {
-        socketIds: socketIds,
+        socketids: socketids,
       },
     });
 
