@@ -79,8 +79,9 @@ export class ChatGateway
   @SubscribeMessage('newMessage')
   async onNewMessage(
     @MessageBody()
-    createMessageDto: any
+    createMessageDto: any,
   ) {
+    const { userId } = createMessageDto;
     const receiverUser = await this.prismaService.user.findUnique({
       where: {
         id: createMessageDto.receiverId,
@@ -90,16 +91,24 @@ export class ChatGateway
       throw new WsException("User not found");
     }
 
-    const userToSockets = this.usersToSockets.find(
+    const receiverToSockets = this.usersToSockets.find(
       (item) => item.userId === receiverUser.id
     );
-    const sockets = userToSockets?.sockets || [];
+    const senderToSockets = this.usersToSockets.find(
+      (item) => item.userId === userId
+    );
+
+    let sockets = senderToSockets?.sockets || [];
+    if (receiverToSockets) {
+      sockets = [...receiverToSockets?.sockets, ...sockets];
+    }
+
     const newMessage = await this.messageService.create(
       createMessageDto,
       createMessageDto.userId
     );
 
-    for(let i = 0; i < sockets.length; i++) {
+    for (let i = 0; i < sockets.length; i++) {
       const socket = sockets[i];
       socket.emit("onMessage", newMessage);
     }
