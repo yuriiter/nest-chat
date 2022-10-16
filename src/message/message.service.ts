@@ -49,10 +49,10 @@ export class MessageService {
         },
       });
 
+      return newMessage;
     }
     catch (err) {
       throw new BadRequestException("Invalid parameters");
     }
-    return { message: "Successfully sent" };
   }
 }

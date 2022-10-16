@@ -2,10 +2,18 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Chat } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import * as jwt from 'jsonwebtoken';
+import { UserService } from '../user/user.service';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class ChatService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private userService: UserService,
+    private configService: ConfigService
+  ) {}
 
   async create(createChatDto: CreateChatDto, userId: number) {
     const userIds = createChatDto.users;
@@ -171,5 +179,70 @@ export class ChatService {
       (chat) => chat.messages.length > 0
     );
     return nonEmptyChats;
+  }
+
+  async mapSocketIdsToUsers(
+    bearerToken: string,
+    socket: Socket,
+    usersToSockets: { userId: number; sockets: Socket[] }[]
+  ) {
+    try {
+      const socketId = socket.id;
+      const decoded = jwt.verify(
+        bearerToken,
+        this.configService.get('JWT_SECRET')
+      ) as any;
+
+      const user = await this.userService.validateUser(decoded);
+
+      if(!user) {
+        return false;
+      }
+
+      if(!usersToSockets) {
+        usersToSockets = [];
+      }
+
+      const userToSocketIds = usersToSockets.find(
+        (item) => item.userId === user.id
+      );
+      if(userToSocketIds) {
+        userToSocketIds.sockets.push(socket);
+      }
+      else {
+        usersToSockets.push({ userId: user.id, sockets: [socket] });
+      }
+      return true;
+    } catch (ex) {
+      console.log(ex);
+      return false;
+    }
+  }
+
+
+  async removeSocketIdFromMap(
+    socket: Socket,
+    usersToSockets: { userId: number; sockets: Socket[] }[]
+  ) {
+    try {
+      const userToSockets = usersToSockets.find(
+        (item) => item.sockets.indexOf(socket) !== -1
+      );
+      if (userToSockets) {
+        if(userToSockets.sockets.length === 1) {
+          usersToSockets = usersToSockets.filter(
+            (item) => item !== userToSockets);
+        }
+        else {
+          userToSockets.sockets = userToSockets.sockets.filter(
+            (item) => item === socket
+          );
+        }
+      }
+      return true;
+    } catch (ex) {
+      console.log(ex);
+      return false;
+    }
   }
 }

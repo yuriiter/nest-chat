@@ -54,4 +54,22 @@ export class UserService {
 
     return searchedUser;
   }
+
+
+  async validateUser(payload: { sub: number; email: string }) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: payload.sub,
+      },
+    });
+
+    if(user !== null) {
+      delete user.hash;
+    }
+    else {
+      return false;
+    }
+
+    return user;
+  }
 }

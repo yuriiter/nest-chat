@@ -2,13 +2,14 @@ import { CanActivate, Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
-import { User } from '@prisma/client';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class WsGuard implements CanActivate {
   constructor(
     private prismaService: PrismaService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private userService: UserService
   ) {}
 
   async canActivate(context: any): Promise<any> {
@@ -24,27 +25,10 @@ export class WsGuard implements CanActivate {
       context.switchToWs().getData().userId = decoded.sub;
       context.switchToWs().getData().socketId = context.args[0].client.id;
 
-      return await this.validate(decoded);
+      return await this.userService.validateUser(decoded);
     } catch (ex) {
       console.log(ex);
       return false;
     }
-  }
-
-  async validate(payload: { sub: number; email: string }) {
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        id: payload.sub,
-      },
-    });
-
-    if(user !== null) {
-      delete user.hash;
-    }
-    else {
-      return false;
-    }
-
-    return user;
   }
 }

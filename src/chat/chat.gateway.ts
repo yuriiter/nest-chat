@@ -6,11 +6,10 @@ import {
   WebSocketServer, WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CreateMessageDto } from '../message/dto/create-message.dto';
 import { WsGuard } from '../auth/guard/ws.guard';
 import { MessageService } from '../message/message.service';
-import { Context } from 'vm';
 import { PrismaService } from '../prisma/prisma.service';
+import { ChatService } from './chat.service';
 
 
 @UseGuards(WsGuard)
@@ -24,70 +23,19 @@ export class ChatGateway
 {
   constructor(
     private messageService: MessageService,
-    private prismaService: PrismaService
+    private prismaService: PrismaService,
+    private chatService: ChatService
   ) {}
 
   @WebSocketServer()
   server: Server;
-  usersToSocketIds: { userId: number; socketIds: string[] }[];
+  usersToSockets: { userId: number; sockets: Socket[] }[] = [];
 
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      console.log(socket);
-    });
-  }
 
   @SubscribeMessage('status')
   async onStatus(
     @MessageBody()
       createMessageDto: any
-  ) {
-    const { userId, socketId } = createMessageDto;
-    const receiverUser = await this.prismaService.user.findUnique({
-      where: {
-        id: createMessageDto.receiverId,
-      },
-    });
-
-    if (!receiverUser) {
-      throw new WsException("User not found");
-    }
-
-    const searchedUserToSocketIds = this.usersToSocketIds.find((userToSocketIds) => {
-      return userToSocketIds.userId === userId
-    });
-
-    if (!searchedUserToSocketIds) {
-      this.usersToSocketIds.push({
-        userId: userId as number,
-        socketIds: [] as string[],
-      });
-    }
-    else {
-      searchedUserToSocketIds.socketIds.push(socketId);
-    }
-
-    await this.prismaservice.user.update({
-      where: {
-        id: userid,
-      },
-      data: {
-        socketids: socketids,
-      },
-    });
-
-    this.server
-      .to(socketIds)
-      .emit(
-        'onStatus',
-        this.messageService.create(createMessageDto, createMessageDto.userId)
-      );
-  }
-
-  @SubscribeMessage('newMessage')
-  async onNewMessage(
-    @MessageBody()
-    createMessageDto: any
   ) {
     const { userId, socketId } = createMessageDto;
     const receiverUser = await this.prismaService.user.findUnique({
@@ -104,6 +52,11 @@ export class ChatGateway
 
     const { socketIds } = receiverUser;
 
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
     socketIds.push(socketId);
 
     await this.prismaService.user.update({
@@ -115,49 +68,68 @@ export class ChatGateway
       },
     });
 
-    console.log(socketIds);
     this.server
       .to(socketIds)
       .emit(
-        'onMessage',
+        'onStatus',
         this.messageService.create(createMessageDto, createMessageDto.userId)
       );
   }
 
-  async handleDisconnect(client: Socket) {
-    const user = await this.prismaService.user.findFirst({
+  @SubscribeMessage('newMessage')
+  async onNewMessage(
+    @MessageBody()
+    createMessageDto: any
+  ) {
+    const receiverUser = await this.prismaService.user.findUnique({
       where: {
-        socketIds: {
-          has: client.id,
-        },
-      },
-      select: {
-        socketIds: true,
+        id: createMessageDto.receiverId,
       },
     });
-    if (!user) {
-      return;
+    if(!receiverUser) {
+      throw new WsException("User not found");
     }
 
-    const socketIds = user.socketIds;
+    const userToSockets = this.usersToSockets.find(
+      (item) => item.userId === receiverUser.id
+    );
+    const sockets = userToSockets?.sockets || [];
+    const newMessage = await this.messageService.create(
+      createMessageDto,
+      createMessageDto.userId
+    );
 
-    const newSocketIds = socketIds.filter((socketId) => socketId !== client.id);
-    await this.prismaService.user.updateMany({
-      where: {
-        socketIds: {
-          has: client.id,
-        },
-      },
-      data: {
-        socketIds: newSocketIds,
-      },
-    });
+    for(let i = 0; i < sockets.length; i++) {
+      const socket = sockets[i];
+      socket.emit("onMessage", newMessage);
+    }
+  }
 
-
+  async handleDisconnect(socket: any) {
+    this.chatService.removeSocketIdFromMap(
+      socket,
+      this.usersToSockets
+    );
   }
 
   afterInit(server: any): any {
   }
-  handleConnection(client: any, ...args): any {
+
+
+  async handleConnection(socket: any) {
+    const bearerToken = socket.handshake.headers.authorization.split(' ')[1];
+    if (
+      !(await this.chatService.mapSocketIdsToUsers(
+        bearerToken,
+        socket,
+        this.usersToSockets
+      ))
+    ) {
+      socket.on('forceDisconnect', function(){
+        socket.disconnect();
+      });
+    }
   }
 }
+
+// TODO: create an initialization event, sending user id to the server
