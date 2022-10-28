@@ -1,0 +1,192 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/yurii/Documents/web-projects/nest-chat/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/acbd555b/
+2FdosMoPdokPnLeWgd4lesX8Y3t	.idea/workspace.xml	/^  <component name="ProjectId" id="2FdosMoPdokPnLeWgd4lesX8Y3t" \/>$/;"	i
+669b9a30-4dd6-4b3a-988b-530ba06ba739	.idea/workspace.xml	/^      <changelist id="669b9a30-4dd6-4b3a-988b-530ba06ba739" name="Changes" comment="" \/>$/;"	i
+669b9a30-4dd6-4b3a-988b-530ba06ba739	.idea/workspace.xml	/^    <list default="true" id="669b9a30-4dd6-4b3a-988b-530ba06ba739" name="Changes" comment="">$/;"	i
+A	prisma/migrations/20221003221536_init/migration.sql	/^    "A" INTEGER NOT NULL,$/;"	E	table:_ChatToUser
+AppController	src/app.controller.ts	/^export class AppController {$/;"	c
+AppModule	src/app.module.ts	/^export class AppModule {}$/;"	c
+AppService	src/app.service.ts	/^export class AppService {$/;"	c
+AuthController	src/auth/auth.controller.ts	/^export class AuthController {$/;"	c
+AuthModule	src/auth/auth.module.ts	/^export class AuthModule {}$/;"	c
+AuthService	src/auth/auth.service.ts	/^export class AuthService {$/;"	c
+B	prisma/migrations/20221003221536_init/migration.sql	/^    "B" INTEGER NOT NULL$/;"	E	table:_ChatToUser
+Chat	prisma/migrations/20221003221536_init/migration.sql	/^CREATE TABLE "Chat" ($/;"	t
+ChatController	src/chat/chat.controller.ts	/^export class ChatController {$/;"	c
+ChatGateway	src/chat/chat.gateway.ts	/^export class ChatGateway$/;"	c
+ChatModule	src/chat/chat.module.ts	/^export class ChatModule {}$/;"	c
+ChatService	src/chat/chat.service.ts	/^export class ChatService {$/;"	c
+CreateChatDto	src/chat/dto/create-chat.dto.ts	/^export class CreateChatDto {$/;"	c
+CreateMessageDto	src/message/dto/create-message.dto.ts	/^export class CreateMessageDto {$/;"	c
+Default	.idea/workspace.xml	/^    <task active="true" id="Default" summary="Default task">$/;"	i
+Express	src/types/user.d.ts	/^declare namespace Express {$/;"	n
+JwtGuard	src/auth/guard/jwt.guard.ts	/^export class JwtGuard extends AuthGuard("jwt") {$/;"	c
+JwtStrategy	src/auth/strategy/jwt.strategy.ts	/^export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {$/;"	c
+Message	prisma/migrations/20221003221536_init/migration.sql	/^CREATE TABLE "Message" ($/;"	t
+MessageController	src/message/message.controller.ts	/^export class MessageController {$/;"	c
+MessageModule	src/message/message.module.ts	/^export class MessageModule {}$/;"	c
+MessageService	src/message/message.service.ts	/^export class MessageService {$/;"	c
+PrismaModule	src/prisma/prisma.module.ts	/^export class PrismaModule {}$/;"	c
+PrismaService	src/prisma/prisma.service.ts	/^export class PrismaService extends PrismaClient {$/;"	c
+Request	src/types/user.d.ts	/^  export interface Request {$/;"	i	namespace:Express
+SignInDto	src/auth/dto/signIn.dto.ts	/^export class SignInDto {$/;"	c
+SignUpDto	src/auth/dto/signUp.dto.ts	/^export class SignUpDto {$/;"	c
+Status	src/types/status.d.ts	/^type Status = "WRITING" | "RECORDING" | "ONLINE";$/;"	a
+User	prisma/migrations/20221003221536_init/migration.sql	/^CREATE TABLE "User" ($/;"	t
+UserController	src/user/user.controller.ts	/^export class UserController {$/;"	c
+UserModule	src/user/user.module.ts	/^export class UserModule {}$/;"	c
+UserService	src/user/user.service.ts	/^export class UserService {$/;"	c
+User_email_key	prisma/migrations/20221003221536_init/migration.sql	/^CREATE UNIQUE INDEX "User_email_key" ON "User"("email");$/;"	i	table:User
+User_interactedUserId_key	prisma/migrations/20221003221536_init/migration.sql	/^CREATE UNIQUE INDEX "User_interactedUserId_key" ON "User"("interactedUserId");$/;"	i	table:User
+User_interactingUserId_key	prisma/migrations/20221003221536_init/migration.sql	/^CREATE UNIQUE INDEX "User_interactingUserId_key" ON "User"("interactingUserId");$/;"	i	table:User
+WsGuard	src/auth/guard/ws.guard.ts	/^export class WsGuard implements CanActivate {$/;"	c
+_ChatToUser	prisma/migrations/20221003221536_init/migration.sql	/^CREATE TABLE "_ChatToUser" ($/;"	t
+_ChatToUser_AB_unique	prisma/migrations/20221003221536_init/migration.sql	/^CREATE UNIQUE INDEX "_ChatToUser_AB_unique" ON "_ChatToUser"("A", "B");$/;"	i	table:_ChatToUser
+_ChatToUser_B_index	prisma/migrations/20221003221536_init/migration.sql	/^CREATE INDEX "_ChatToUser_B_index" ON "_ChatToUser"("B");$/;"	i	table:_ChatToUser
+afterInit	src/chat/chat.gateway.ts	/^  afterInit(server: any): any {}$/;"	m	class:ChatGateway
+app	src/main.ts	/^  const app = await NestFactory.create(AppModule);$/;"	C	function:bootstrap
+app	test/app.e2e-spec.ts	/^  let app: INestApplication;$/;"	v
+appService	src/app.controller.ts	/^  constructor(private readonly appService: AppService) {}$/;"	p	class:AppController
+authService	src/auth/auth.controller.ts	/^  constructor(private authService: AuthService) {}$/;"	p	class:AuthController
+authorId	prisma/migrations/20221003221536_init/migration.sql	/^    "authorId" INTEGER NOT NULL,$/;"	E	table:Message
+bearerToken	src/auth/guard/ws.guard.ts	/^    const bearerToken =$/;"	C	method:WsGuard.canActivate
+bearerToken	src/chat/chat.gateway.ts	/^    const bearerToken = socket.handshake.headers.authorization.split(" ")[1];$/;"	C	method:ChatGateway.handleConnection
+bootstrap	src/main.ts	/^async function bootstrap() {$/;"	f
+canActivate	src/auth/guard/ws.guard.ts	/^  async canActivate(context: any): Promise<any> {$/;"	m	class:WsGuard
+changeStatus	src/chat/chat.gateway.ts	/^  async changeStatus($/;"	m	class:ChatGateway
+chat	src/chat/chat.service.ts	/^    const chat = await this.prismaService.chat.findUnique({$/;"	C	method:ChatService.getMessages
+chatId	prisma/migrations/20221003221536_init/migration.sql	/^    "chatId" INTEGER NOT NULL,$/;"	E	table:Message
+chatId	src/message/dto/create-message.dto.ts	/^  chatId: number;$/;"	p	class:CreateMessageDto
+chatService	src/chat/chat.controller.ts	/^  constructor(private chatService: ChatService) {}$/;"	p	class:ChatController
+chatService	src/chat/chat.gateway.ts	/^    private chatService: ChatService$/;"	p	class:ChatGateway
+clientSocketId	src/auth/guard/ws.guard.ts	/^      const clientSocketId = context.args[0].client.id;$/;"	C	method:WsGuard.canActivate
+configService	src/auth/auth.service.ts	/^    private configService: ConfigService$/;"	p	class:AuthService
+configService	src/auth/guard/ws.guard.ts	/^    private configService: ConfigService,$/;"	p	class:WsGuard
+configService	src/chat/chat.service.ts	/^    private configService: ConfigService$/;"	p	class:ChatService
+configService	src/prisma/prisma.service.ts	/^  constructor(private configService: ConfigService) {$/;"	p	class:PrismaService
+constructor	src/app.controller.ts	/^  constructor(private readonly appService: AppService) {}$/;"	m	class:AppController
+constructor	src/auth/auth.controller.ts	/^  constructor(private authService: AuthService) {}$/;"	m	class:AuthController
+constructor	src/auth/auth.service.ts	/^  constructor($/;"	m	class:AuthService
+constructor	src/auth/guard/ws.guard.ts	/^  constructor($/;"	m	class:WsGuard
+constructor	src/chat/chat.controller.ts	/^  constructor(private chatService: ChatService) {}$/;"	m	class:ChatController
+constructor	src/chat/chat.gateway.ts	/^  constructor($/;"	m	class:ChatGateway
+constructor	src/chat/chat.service.ts	/^  constructor($/;"	m	class:ChatService
+constructor	src/message/message.controller.ts	/^  constructor(private readonly messageService: MessageService) {}$/;"	m	class:MessageController
+constructor	src/message/message.service.ts	/^  constructor(private prismaService: PrismaService) {}$/;"	m	class:MessageService
+constructor	src/prisma/prisma.service.ts	/^  constructor(private configService: ConfigService) {$/;"	m	class:PrismaService
+constructor	src/user/user.controller.ts	/^  constructor(private userService: UserService) {}$/;"	m	class:UserController
+constructor	src/user/user.service.ts	/^  constructor(private prismaService: PrismaService) {}$/;"	m	class:UserService
+countOfNewMessagesToUsers	src/message/message.service.ts	/^      const { users, countOfNewMessagesToUsers } =$/;"	C	method:MessageService.create
+create	src/chat/chat.controller.ts	/^  create(@Req() req: Request, @Body() createChatDto: CreateChatDto) {$/;"	m	class:ChatController
+create	src/chat/chat.service.ts	/^  async create(createChatDto: CreateChatDto, userId: number) {$/;"	m	class:ChatService
+create	src/message/message.controller.ts	/^  create(@Body() createMessageDto: CreateMessageDto, @Req() req: Request) {$/;"	m	class:MessageController
+create	src/message/message.service.ts	/^  async create(createMessageDto: CreateMessageDto, userId: number) {$/;"	m	class:MessageService
+data	src/auth/auth.service.ts	/^    const data = {$/;"	C	method:AuthService.signToken
+decoded	src/auth/guard/ws.guard.ts	/^      const decoded = jwt.verify($/;"	C	method:WsGuard.canActivate
+decoded	src/chat/chat.service.ts	/^      const decoded = jwt.verify($/;"	C	method:ChatService.joinRoom
+doesUserBelongToChat	src/chat/chat.service.ts	/^    const doesUserBelongToChat =$/;"	C	method:ChatService.getMessages
+email	prisma/migrations/20221003221536_init/migration.sql	/^    "email" TEXT NOT NULL,$/;"	E	table:User
+email	src/auth/auth.service.ts	/^      email,$/;"	C	method:AuthService.signToken
+email	src/auth/dto/signIn.dto.ts	/^  email: string;$/;"	p	class:SignInDto
+email	src/auth/dto/signUp.dto.ts	/^  email: string;$/;"	p	class:SignUpDto
+existingChat	src/chat/chat.service.ts	/^    const existingChat = receiver.chats.filter((chat) => {$/;"	C	method:ChatService.create
+fullName	prisma/migrations/20221003221536_init/migration.sql	/^    "fullName" TEXT NOT NULL,$/;"	E	table:User
+fullName	src/auth/dto/signUp.dto.ts	/^  fullName: string;$/;"	p	class:SignUpDto
+getAll	src/user/user.service.ts	/^  async getAll() {$/;"	m	class:UserService
+getByEmail	src/user/user.controller.ts	/^  getByEmail(@Query("email") email: string, @Req() req: Request) {$/;"	m	class:UserController
+getHello	src/app.controller.ts	/^  getHello(): object {$/;"	m	class:AppController
+getHello	src/app.service.ts	/^  getHello(): object {$/;"	m	class:AppService
+getMe	src/user/user.controller.ts	/^  getMe(@Req() req: Request) {$/;"	m	class:UserController
+getMe	src/user/user.service.ts	/^  async getMe(userId: number) {$/;"	m	class:UserService
+getMessages	src/chat/chat.controller.ts	/^  getMessages($/;"	m	class:ChatController
+getMessages	src/chat/chat.service.ts	/^  async getMessages($/;"	m	class:ChatService
+getUserByEmail	src/user/user.service.ts	/^  async getUserByEmail(email: string, enquiringUserId: number) {$/;"	m	class:UserService
+getUserChats	src/chat/chat.controller.ts	/^  getUserChats(@Req() req: Request) {$/;"	m	class:ChatController
+getUserChats	src/chat/chat.service.ts	/^  async getUserChats(userId: number) {$/;"	m	class:ChatService
+handleConnection	src/chat/chat.gateway.ts	/^  async handleConnection(socket: any) {$/;"	m	class:ChatGateway
+hash	prisma/migrations/20221003221536_init/migration.sql	/^    "hash" TEXT NOT NULL,$/;"	E	table:User
+hash	src/auth/auth.service.ts	/^    const hash = await argon.hash(authDto.password);$/;"	C	method:AuthService.signup
+id	prisma/migrations/20221003221536_init/migration.sql	/^    "id" SERIAL NOT NULL,$/;"	E	table:Chat
+id	prisma/migrations/20221003221536_init/migration.sql	/^    "id" SERIAL NOT NULL,$/;"	E	table:Message
+id	prisma/migrations/20221003221536_init/migration.sql	/^    "id" SERIAL NOT NULL,$/;"	E	table:User
+interactedUserId	prisma/migrations/20221003221536_init/migration.sql	/^    "interactedUserId" INTEGER,$/;"	E	table:User
+interactingUserId	prisma/migrations/20221003221536_init/migration.sql	/^    "interactingUserId" INTEGER,$/;"	E	table:User
+isArrayValid	src/chat/chat.service.ts	/^    const isArrayValid =$/;"	C	method:ChatService.create
+isRead	prisma/migrations/20221003221536_init/migration.sql	/^    "isRead" BOOLEAN NOT NULL,$/;"	E	table:Message
+joinRoom	src/chat/chat.service.ts	/^  async joinRoom(bearerToken: string, socket: Socket) {$/;"	m	class:ChatService
+jwtService	src/auth/auth.service.ts	/^    private jwtService: JwtService,$/;"	p	class:AuthService
+lastOnline	prisma/migrations/20221003221536_init/migration.sql	/^    "lastOnline" TIMESTAMP(3) NOT NULL,$/;"	E	table:User
+messageContent	src/message/dto/create-message.dto.ts	/^  messageContent: string;$/;"	p	class:CreateMessageDto
+messageService	src/chat/chat.gateway.ts	/^    private messageService: MessageService,$/;"	p	class:ChatGateway
+messageService	src/message/message.controller.ts	/^  constructor(private readonly messageService: MessageService) {}$/;"	p	class:MessageController
+messageType	src/message/dto/create-message.dto.ts	/^  messageType: MessageType;$/;"	p	class:CreateMessageDto
+moduleFixture	test/app.e2e-spec.ts	/^    const moduleFixture: TestingModule = await Test.createTestingModule({$/;"	C
+newChat	src/chat/chat.service.ts	/^    const newChat: Chat & { countOfUnread?: number } =$/;"	C	method:ChatService.create
+newMessage	src/chat/chat.gateway.ts	/^    const newMessage = await this.messageService.create($/;"	C	method:ChatGateway.onNewMessage
+newMessage	src/message/message.service.ts	/^      const newMessage = await this.prismaService.message.create({$/;"	C	method:MessageService.create
+nonEmptyChats	src/chat/chat.service.ts	/^    const nonEmptyChats = userChats.chats.filter($/;"	C	method:ChatService.getUserChats
+onNewMessage	src/chat/chat.gateway.ts	/^  async onNewMessage($/;"	m	class:ChatGateway
+onStatus	src/chat/chat.gateway.ts	/^  async onStatus($/;"	m	class:ChatGateway
+password	src/auth/dto/signIn.dto.ts	/^  password: string;$/;"	p	class:SignInDto
+password	src/auth/dto/signUp.dto.ts	/^  password: string;$/;"	p	class:SignUpDto
+passwordVerified	src/auth/auth.service.ts	/^    const passwordVerified = await argon.verify(user.hash, authDto.password);$/;"	C	method:AuthService.signin
+postLogin	src/auth/auth.controller.ts	/^  async postLogin(@Body() signInDto: SignInDto) {$/;"	m	class:AuthController
+postSignup	src/auth/auth.controller.ts	/^  postSignup(@Body() signUpDto: SignUpDto) {$/;"	m	class:AuthController
+prismaService	src/auth/auth.service.ts	/^    private prismaService: PrismaService,$/;"	p	class:AuthService
+prismaService	src/auth/guard/ws.guard.ts	/^    private prismaService: PrismaService,$/;"	p	class:WsGuard
+prismaService	src/chat/chat.gateway.ts	/^    private prismaService: PrismaService,$/;"	p	class:ChatGateway
+prismaService	src/chat/chat.service.ts	/^    private prismaService: PrismaService,$/;"	p	class:ChatService
+prismaService	src/message/message.service.ts	/^  constructor(private prismaService: PrismaService) {}$/;"	p	class:MessageService
+prismaService	src/user/user.service.ts	/^  constructor(private prismaService: PrismaService) {}$/;"	p	class:UserService
+receiver	src/chat/chat.service.ts	/^    const receiver = await this.prismaService.user.findUnique({$/;"	C	method:ChatService.create
+receiverId	prisma/migrations/20221003221536_init/migration.sql	/^    "receiverId" INTEGER NOT NULL,$/;"	E	table:Message
+receiverId	src/chat/chat.gateway.ts	/^          const receiverId = user.id;$/;"	C	method:ChatGateway.changeStatus
+receiverId	src/chat/chat.service.ts	/^    const receiverId = userIds[0] === userId ? userIds[1] : userIds[0];$/;"	C	method:ChatService.create
+receiverId	src/message/dto/create-message.dto.ts	/^  receiverId: number;$/;"	p	class:CreateMessageDto
+receiverUser	src/chat/chat.gateway.ts	/^    const receiverUser = await this.prismaService.user.findUnique({$/;"	C	method:ChatGateway.onNewMessage
+receiverUser	src/chat/chat.gateway.ts	/^    const receiverUser = await this.prismaService.user.findUnique({$/;"	C	method:ChatGateway.onStatus
+returnedChat	src/chat/chat.service.ts	/^      const returnedChat: Chat & { countOfUnread?: number } =$/;"	C	method:ChatService.create
+searchedUser	src/user/user.service.ts	/^    const searchedUser = await this.prismaService.user.findUnique({$/;"	C	method:UserService.getUserByEmail
+sentDateTime	prisma/migrations/20221003221536_init/migration.sql	/^    "sentDateTime" TIMESTAMP(3) NOT NULL,$/;"	E	table:Message
+server	src/chat/chat.gateway.ts	/^  server: Server;$/;"	p	class:ChatGateway
+signToken	src/auth/auth.service.ts	/^  signToken(email: string, userId: number) {$/;"	m	class:AuthService
+signin	src/auth/auth.service.ts	/^  async signin(authDto: SignInDto): Promise<{ access_token: string }> {$/;"	m	class:AuthService
+signup	src/auth/auth.service.ts	/^  async signup(authDto: SignUpDto) {$/;"	m	class:AuthService
+skip	src/chat/chat.service.ts	/^    const skip = skip_ || 0;$/;"	C	method:ChatService.getMessages
+socketId	src/chat/chat.gateway.ts	/^    const { userId, socketId } = createMessageDto;$/;"	C	method:ChatGateway.onStatus
+socketId	src/chat/chat.service.ts	/^      const socketId = socket.id;$/;"	C	method:ChatService.joinRoom
+socketIds	src/chat/chat.gateway.ts	/^    const { socketIds } = receiverUser;$/;"	C	method:ChatGateway.onStatus
+take	src/chat/chat.service.ts	/^    const take = take_ || 15;$/;"	C	method:ChatService.getMessages
+token	src/auth/auth.service.ts	/^    const token = await this.signToken(user.email, user.id);$/;"	C	method:AuthService.signin
+user	src/auth/auth.service.ts	/^      const user = await this.prismaService.user.create({$/;"	C	method:AuthService.signup
+user	src/auth/auth.service.ts	/^    const user = await this.prismaService.user.findUnique({$/;"	C	method:AuthService.signin
+user	src/chat/chat.gateway.ts	/^    const user = await this.prismaService.user.findUnique({$/;"	C	method:ChatGateway.onStatus
+user	src/chat/chat.service.ts	/^      const user = await this.userService.validateUser(decoded);$/;"	C	method:ChatService.joinRoom
+user	src/types/user.d.ts	/^    user: any;$/;"	p	interface:Express.Request
+user	src/user/user.service.ts	/^      const user: User = await this.prismaService.user.findUnique({$/;"	C	method:UserService.getMe
+user	src/user/user.service.ts	/^    const user = await this.prismaService.user.findUnique({$/;"	C	method:UserService.validateUser
+userChat	src/chat/chat.gateway.ts	/^    for (const userChat of userChats) {$/;"	C	method:ChatGateway.changeStatus
+userChats	src/chat/chat.gateway.ts	/^    const userChats = await this.chatService.getUserChats(userId);$/;"	C	method:ChatGateway.changeStatus
+userChats	src/chat/chat.service.ts	/^    const userChats = await this.prismaService.user.findUnique({$/;"	C	method:ChatService.getUserChats
+userId	src/chat/chat.gateway.ts	/^    const { userId } = statusDto;$/;"	C	method:ChatGateway.changeStatus
+userId	src/chat/chat.gateway.ts	/^    const { userId, socketId } = createMessageDto;$/;"	C	method:ChatGateway.onStatus
+userIds	src/chat/chat.service.ts	/^    const receiverId = userIds[0] === userId ? userIds[1] : userIds[0];$/;"	C	method:ChatService.create
+userIds	src/chat/chat.service.ts	/^    const userIds = createChatDto.users;$/;"	C	method:ChatService.create
+userInArrayIdx	src/message/message.service.ts	/^      const userInArrayIdx = usersIds.indexOf(createMessageDto.receiverId);$/;"	C	method:MessageService.create
+userService	src/auth/guard/ws.guard.ts	/^    private userService: UserService$/;"	p	class:WsGuard
+userService	src/chat/chat.service.ts	/^    private userService: UserService,$/;"	p	class:ChatService
+userService	src/user/user.controller.ts	/^  constructor(private userService: UserService) {}$/;"	p	class:UserController
+userStatus	prisma/migrations/20221003221536_init/migration.sql	/^    "userStatus" "UserStatus" NOT NULL,$/;"	E	table:User
+users	src/chat/dto/create-chat.dto.ts	/^  users: number[];$/;"	p	class:CreateChatDto
+users	src/message/message.service.ts	/^      const { users, countOfNewMessagesToUsers } =$/;"	C	method:MessageService.create
+usersIds	src/message/message.service.ts	/^      const usersIds = users.map((user) => user.id);$/;"	C	method:MessageService.create
+validateUser	src/user/user.service.ts	/^  async validateUser(payload: { sub: number; email: string }) {$/;"	m	class:UserService

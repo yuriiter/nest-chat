@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { PrismaService } from '../prisma/prisma.service';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { CreateMessageDto } from "./dto/create-message.dto";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class MessageService {
@@ -26,14 +26,14 @@ export class MessageService {
 
       const { users, countOfNewMessagesToUsers } =
         await this.prismaService.chat.findUnique({
-        where: {
-          id: createMessageDto.chatId,
-        },
-        select: {
-          users: true,
-          countOfNewMessagesToUsers: true,
-        },
-      });
+          where: {
+            id: createMessageDto.chatId,
+          },
+          select: {
+            users: true,
+            countOfNewMessagesToUsers: true,
+          },
+        });
 
       const usersIds = users.map((user) => user.id);
 
@@ -50,8 +50,7 @@ export class MessageService {
       });
 
       return newMessage;
-    }
-    catch (err) {
+    } catch (err) {
       throw new BadRequestException("Invalid parameters");
     }
   }

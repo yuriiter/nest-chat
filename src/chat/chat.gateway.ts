@@ -1,21 +1,24 @@
-import { OnModuleInit, UseGuards } from '@nestjs/common';
+import { UseGuards } from "@nestjs/common";
 import {
-  MessageBody, OnGatewayConnection, OnGatewayInit,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer, WsException,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { WsGuard } from '../auth/guard/ws.guard';
-import { MessageService } from '../message/message.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { ChatService } from './chat.service';
-
+  WebSocketServer,
+  WsException,
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { WsGuard } from "../auth/guard/ws.guard";
+import { MessageService } from "../message/message.service";
+import { PrismaService } from "../prisma/prisma.service";
+import { ChatService } from "./chat.service";
+import Status from "../types/status";
 
 @UseGuards(WsGuard)
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:3000'],
+    origin: ["http://localhost:3000"],
   },
 })
 export class ChatGateway
@@ -29,13 +32,11 @@ export class ChatGateway
 
   @WebSocketServer()
   server: Server;
-  usersToSockets: { userId: number; sockets: Socket[] }[] = [];
 
-
-  @SubscribeMessage('status')
+  @SubscribeMessage("status")
   async onStatus(
     @MessageBody()
-      createMessageDto: any
+    createMessageDto: any
   ) {
     const { userId, socketId } = createMessageDto;
     const receiverUser = await this.prismaService.user.findUnique({
@@ -46,7 +47,7 @@ export class ChatGateway
         socketIds: true,
       },
     });
-    if(!receiverUser) {
+    if (!receiverUser) {
       throw new WsException("User not found");
     }
 
@@ -71,36 +72,23 @@ export class ChatGateway
     this.server
       .to(socketIds)
       .emit(
-        'onStatus',
+        "onStatus",
         this.messageService.create(createMessageDto, createMessageDto.userId)
       );
   }
 
-  @SubscribeMessage('newMessage')
+  @SubscribeMessage("newMessage")
   async onNewMessage(
     @MessageBody()
-    createMessageDto: any,
+    createMessageDto: any
   ) {
-    const { userId } = createMessageDto;
     const receiverUser = await this.prismaService.user.findUnique({
       where: {
         id: createMessageDto.receiverId,
       },
     });
-    if(!receiverUser) {
+    if (!receiverUser) {
       throw new WsException("User not found");
-    }
-
-    const receiverToSockets = this.usersToSockets.find(
-      (item) => item.userId === receiverUser.id
-    );
-    const senderToSockets = this.usersToSockets.find(
-      (item) => item.userId === userId
-    );
-
-    let sockets = senderToSockets?.sockets || [];
-    if (receiverToSockets) {
-      sockets = [...receiverToSockets?.sockets, ...sockets];
     }
 
     const newMessage = await this.messageService.create(
@@ -108,33 +96,34 @@ export class ChatGateway
       createMessageDto.userId
     );
 
-    for (let i = 0; i < sockets.length; i++) {
-      const socket = sockets[i];
-      socket.emit("onMessage", newMessage);
+    this.server.to(`room_${receiverUser.id}`).emit("onMessage", newMessage);
+    this.server
+      .to(`room_${createMessageDto.userId}`)
+      .emit("onMessage", newMessage);
+  }
+
+  @SubscribeMessage("newStatus")
+  async changeStatus(
+    @MessageBody() statusDto: { status: Status; userId: number }
+  ) {
+    const { userId } = statusDto;
+    const userChats = await this.chatService.getUserChats(userId);
+    for (const userChat of userChats) {
+      userChat.users.forEach((user) => {
+        if (user.id !== userId) {
+          const receiverId = user.id;
+          this.server.to(`room_${receiverId}`).emit("statusOfUsers", statusDto);
+        }
+      });
     }
   }
 
-  async handleDisconnect(socket: any) {
-    this.chatService.removeSocketIdFromMap(
-      socket,
-      this.usersToSockets
-    );
-  }
-
-  afterInit(server: any): any {
-  }
-
+  afterInit(server: any): any {}
 
   async handleConnection(socket: any) {
-    const bearerToken = socket.handshake.headers.authorization.split(' ')[1];
-    if (
-      !(await this.chatService.mapSocketIdsToUsers(
-        bearerToken,
-        socket,
-        this.usersToSockets
-      ))
-    ) {
-      socket.on('forceDisconnect', function(){
+    const bearerToken = socket.handshake.headers.authorization.split(" ")[1];
+    if (!(await this.chatService.joinRoom(bearerToken, socket))) {
+      socket.on("forceDisconnect", function () {
         socket.disconnect();
       });
     }

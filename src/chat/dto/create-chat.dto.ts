@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray } from "class-validator";
 
 export class CreateChatDto {
   @IsArray()

@@ -9,7 +9,7 @@ import * as argon from "argon2";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
-import { SignInDto } from './dto/signIn.dto';
+import { SignInDto } from "./dto/signIn.dto";
 
 @Injectable({})
 export class AuthService {
@@ -51,10 +51,7 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException("Bad credentials");
     }
-    const passwordVerified = await argon.verify(
-      user.hash,
-      authDto.password,
-    );
+    const passwordVerified = await argon.verify(user.hash, authDto.password);
     if (!passwordVerified) {
       throw new BadRequestException("Bad credentials");
     }

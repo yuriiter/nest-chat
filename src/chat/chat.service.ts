@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { Chat } from '@prisma/client';
-import { ConfigService } from '@nestjs/config';
-import * as jwt from 'jsonwebtoken';
-import { UserService } from '../user/user.service';
-import { Socket } from 'socket.io';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { CreateChatDto } from "./dto/create-chat.dto";
+import { PrismaService } from "../prisma/prisma.service";
+import { Chat } from "@prisma/client";
+import { ConfigService } from "@nestjs/config";
+import * as jwt from "jsonwebtoken";
+import { UserService } from "../user/user.service";
+import { Socket } from "socket.io";
 
 @Injectable()
 export class ChatService {
@@ -22,7 +22,7 @@ export class ChatService {
       userIds[0] !== userIds[1];
 
     if (!isArrayValid) {
-      throw new BadRequestException('Invalid parameters: users');
+      throw new BadRequestException("Invalid parameters: users");
     }
 
     const receiverId = userIds[0] === userId ? userIds[1] : userIds[0];
@@ -123,14 +123,14 @@ export class ChatService {
       },
     });
     if (!chat) {
-      throw new BadRequestException('Invalid parameters');
+      throw new BadRequestException("Invalid parameters");
     }
 
     const doesUserBelongToChat =
       chat.users.map((user) => user.id).indexOf(userId) !== -1;
 
     if (!doesUserBelongToChat) {
-      throw new BadRequestException('Invalid parameters');
+      throw new BadRequestException("Invalid parameters");
     }
 
     return await this.prismaService.message.findMany({
@@ -140,7 +140,7 @@ export class ChatService {
       take: take,
       skip: skip,
       orderBy: {
-        sentDateTime: 'desc',
+        sentDateTime: "desc",
       },
     });
   }
@@ -181,64 +181,22 @@ export class ChatService {
     return nonEmptyChats;
   }
 
-  async mapSocketIdsToUsers(
-    bearerToken: string,
-    socket: Socket,
-    usersToSockets: { userId: number; sockets: Socket[] }[]
-  ) {
+  async joinRoom(bearerToken: string, socket: Socket) {
     try {
       const socketId = socket.id;
       const decoded = jwt.verify(
         bearerToken,
-        this.configService.get('JWT_SECRET')
+        this.configService.get("JWT_SECRET")
       ) as any;
 
       const user = await this.userService.validateUser(decoded);
 
-      if(!user) {
+      if (!user) {
         return false;
       }
 
-      if(!usersToSockets) {
-        usersToSockets = [];
-      }
+      socket.join(`room_${user.id}`);
 
-      const userToSocketIds = usersToSockets.find(
-        (item) => item.userId === user.id
-      );
-      if(userToSocketIds) {
-        userToSocketIds.sockets.push(socket);
-      }
-      else {
-        usersToSockets.push({ userId: user.id, sockets: [socket] });
-      }
-      return true;
-    } catch (ex) {
-      console.log(ex);
-      return false;
-    }
-  }
-
-
-  async removeSocketIdFromMap(
-    socket: Socket,
-    usersToSockets: { userId: number; sockets: Socket[] }[]
-  ) {
-    try {
-      const userToSockets = usersToSockets.find(
-        (item) => item.sockets.indexOf(socket) !== -1
-      );
-      if (userToSockets) {
-        if(userToSockets.sockets.length === 1) {
-          usersToSockets = usersToSockets.filter(
-            (item) => item !== userToSockets);
-        }
-        else {
-          userToSockets.sockets = userToSockets.sockets.filter(
-            (item) => item === socket
-          );
-        }
-      }
       return true;
     } catch (ex) {
       console.log(ex);

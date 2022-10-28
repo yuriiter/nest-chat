@@ -1,5 +1,5 @@
-import { User } from '@prisma/client';
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
@@ -42,19 +42,22 @@ export class UserService {
       },
     });
 
-    if(!searchedUser) {
-      throw new BadRequestException("User with email " + email + " doesn't exist");
+    if (!searchedUser) {
+      throw new BadRequestException(
+        "User with email " + email + " doesn't exist"
+      );
     }
 
-    if(searchedUser.id === enquiringUserId) {
-      throw new BadRequestException("The user with the email is the enquiring user");
+    if (searchedUser.id === enquiringUserId) {
+      throw new BadRequestException(
+        "The user with the email is the enquiring user"
+      );
     }
 
     delete searchedUser.hash;
 
     return searchedUser;
   }
-
 
   async validateUser(payload: { sub: number; email: string }) {
     const user = await this.prismaService.user.findUnique({
@@ -63,10 +66,9 @@ export class UserService {
       },
     });
 
-    if(user !== null) {
+    if (user !== null) {
       delete user.hash;
-    }
-    else {
+    } else {
       return false;
     }
 
