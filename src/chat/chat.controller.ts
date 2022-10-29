@@ -35,6 +35,6 @@ export class ChatController {
     @Query("skip") skip,
     @Req() req: Request
   ) {
-    return this.chatService.getMessages(chatId, take, skip, req.user.id);
+    return this.chatService.getMessages(+chatId, +take, +skip, +req.user.id);
   }
 }

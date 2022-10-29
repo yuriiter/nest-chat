@@ -1,2 +1,2 @@
-type Status = "WRITING" | "RECORDING" | "ONLINE";
+type Status = "WRITING" | "RECORDING" | "ONLINE" | "LAST_ONLINE";
 export default Status;

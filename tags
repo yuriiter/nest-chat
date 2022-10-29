@@ -22,7 +22,7 @@ AuthService	src/auth/auth.service.ts	/^export class AuthService {$/;"	c
 B	prisma/migrations/20221003221536_init/migration.sql	/^    "B" INTEGER NOT NULL$/;"	E	table:_ChatToUser
 Chat	prisma/migrations/20221003221536_init/migration.sql	/^CREATE TABLE "Chat" ($/;"	t
 ChatController	src/chat/chat.controller.ts	/^export class ChatController {$/;"	c
-ChatGateway	src/chat/chat.gateway.ts	/^export class ChatGateway$/;"	c
+ChatGateway	src/chat/chat.gateway.ts	/^export class ChatGateway implements OnGatewayInit, OnGatewayConnection {$/;"	c
 ChatModule	src/chat/chat.module.ts	/^export class ChatModule {}$/;"	c
 ChatService	src/chat/chat.service.ts	/^export class ChatService {$/;"	c
 CreateChatDto	src/chat/dto/create-chat.dto.ts	/^export class CreateChatDto {$/;"	c
@@ -40,7 +40,7 @@ PrismaService	src/prisma/prisma.service.ts	/^export class PrismaService extends 
 Request	src/types/user.d.ts	/^  export interface Request {$/;"	i	namespace:Express
 SignInDto	src/auth/dto/signIn.dto.ts	/^export class SignInDto {$/;"	c
 SignUpDto	src/auth/dto/signUp.dto.ts	/^export class SignUpDto {$/;"	c
-Status	src/types/status.d.ts	/^type Status = "WRITING" | "RECORDING" | "ONLINE";$/;"	a
+Status	src/types/status.d.ts	/^type Status = "WRITING" | "RECORDING" | "ONLINE" | "LAST_ONLINE";$/;"	a
 User	prisma/migrations/20221003221536_init/migration.sql	/^CREATE TABLE "User" ($/;"	t
 UserController	src/user/user.controller.ts	/^export class UserController {$/;"	c
 UserModule	src/user/user.module.ts	/^export class UserModule {}$/;"	c
@@ -113,6 +113,7 @@ getUserByEmail	src/user/user.service.ts	/^  async getUserByEmail(email: string, 
 getUserChats	src/chat/chat.controller.ts	/^  getUserChats(@Req() req: Request) {$/;"	m	class:ChatController
 getUserChats	src/chat/chat.service.ts	/^  async getUserChats(userId: number) {$/;"	m	class:ChatService
 handleConnection	src/chat/chat.gateway.ts	/^  async handleConnection(socket: any) {$/;"	m	class:ChatGateway
+handleDisconnect	src/chat/chat.gateway.ts	/^  async handleDisconnect(socket: any) {$/;"	m	class:ChatGateway
 hash	prisma/migrations/20221003221536_init/migration.sql	/^    "hash" TEXT NOT NULL,$/;"	E	table:User
 hash	src/auth/auth.service.ts	/^    const hash = await argon.hash(authDto.password);$/;"	C	method:AuthService.signup
 id	prisma/migrations/20221003221536_init/migration.sql	/^    "id" SERIAL NOT NULL,$/;"	E	table:Chat
@@ -125,10 +126,12 @@ isRead	prisma/migrations/20221003221536_init/migration.sql	/^    "isRead" BOOLEA
 joinRoom	src/chat/chat.service.ts	/^  async joinRoom(bearerToken: string, socket: Socket) {$/;"	m	class:ChatService
 jwtService	src/auth/auth.service.ts	/^    private jwtService: JwtService,$/;"	p	class:AuthService
 lastOnline	prisma/migrations/20221003221536_init/migration.sql	/^    "lastOnline" TIMESTAMP(3) NOT NULL,$/;"	E	table:User
+lastOnline	src/chat/chat.service.ts	/^  async lastOnline(userId) {$/;"	m	class:ChatService
 messageContent	src/message/dto/create-message.dto.ts	/^  messageContent: string;$/;"	p	class:CreateMessageDto
 messageService	src/chat/chat.gateway.ts	/^    private messageService: MessageService,$/;"	p	class:ChatGateway
 messageService	src/message/message.controller.ts	/^  constructor(private readonly messageService: MessageService) {}$/;"	p	class:MessageController
 messageType	src/message/dto/create-message.dto.ts	/^  messageType: MessageType;$/;"	p	class:CreateMessageDto
+messages	src/chat/chat.service.ts	/^    const messages = await this.prismaService.message.findMany({$/;"	C	method:ChatService.getMessages
 moduleFixture	test/app.e2e-spec.ts	/^    const moduleFixture: TestingModule = await Test.createTestingModule({$/;"	C
 newChat	src/chat/chat.service.ts	/^    const newChat: Chat & { countOfUnread?: number } =$/;"	C	method:ChatService.create
 newMessage	src/chat/chat.gateway.ts	/^    const newMessage = await this.messageService.create($/;"	C	method:ChatGateway.onNewMessage
@@ -150,6 +153,8 @@ prismaService	src/user/user.service.ts	/^  constructor(private prismaService: Pr
 receiver	src/chat/chat.service.ts	/^    const receiver = await this.prismaService.user.findUnique({$/;"	C	method:ChatService.create
 receiverId	prisma/migrations/20221003221536_init/migration.sql	/^    "receiverId" INTEGER NOT NULL,$/;"	E	table:Message
 receiverId	src/chat/chat.gateway.ts	/^          const receiverId = user.id;$/;"	C	method:ChatGateway.changeStatus
+receiverId	src/chat/chat.gateway.ts	/^          const receiverId = user.id;$/;"	C	method:ChatGateway.handleConnection
+receiverId	src/chat/chat.gateway.ts	/^          const receiverId = user.id;$/;"	C	method:ChatGateway.handleDisconnect
 receiverId	src/chat/chat.service.ts	/^    const receiverId = userIds[0] === userId ? userIds[1] : userIds[0];$/;"	C	method:ChatService.create
 receiverId	src/message/dto/create-message.dto.ts	/^  receiverId: number;$/;"	p	class:CreateMessageDto
 receiverUser	src/chat/chat.gateway.ts	/^    const receiverUser = await this.prismaService.user.findUnique({$/;"	C	method:ChatGateway.onNewMessage
@@ -175,8 +180,14 @@ user	src/types/user.d.ts	/^    user: any;$/;"	p	interface:Express.Request
 user	src/user/user.service.ts	/^      const user: User = await this.prismaService.user.findUnique({$/;"	C	method:UserService.getMe
 user	src/user/user.service.ts	/^    const user = await this.prismaService.user.findUnique({$/;"	C	method:UserService.validateUser
 userChat	src/chat/chat.gateway.ts	/^    for (const userChat of userChats) {$/;"	C	method:ChatGateway.changeStatus
+userChat	src/chat/chat.gateway.ts	/^    for (const userChat of userChats) {$/;"	C	method:ChatGateway.handleConnection
+userChat	src/chat/chat.gateway.ts	/^    for (const userChat of userChats) {$/;"	C	method:ChatGateway.handleDisconnect
 userChats	src/chat/chat.gateway.ts	/^    const userChats = await this.chatService.getUserChats(userId);$/;"	C	method:ChatGateway.changeStatus
+userChats	src/chat/chat.gateway.ts	/^    const userChats = await this.chatService.getUserChats(userId);$/;"	C	method:ChatGateway.handleConnection
+userChats	src/chat/chat.gateway.ts	/^    const userChats = await this.chatService.getUserChats(userId);$/;"	C	method:ChatGateway.handleDisconnect
 userChats	src/chat/chat.service.ts	/^    const userChats = await this.prismaService.user.findUnique({$/;"	C	method:ChatService.getUserChats
+userId	src/chat/chat.gateway.ts	/^    const { userId } = socket;$/;"	C	method:ChatGateway.handleConnection
+userId	src/chat/chat.gateway.ts	/^    const { userId } = socket;$/;"	C	method:ChatGateway.handleDisconnect
 userId	src/chat/chat.gateway.ts	/^    const { userId } = statusDto;$/;"	C	method:ChatGateway.changeStatus
 userId	src/chat/chat.gateway.ts	/^    const { userId, socketId } = createMessageDto;$/;"	C	method:ChatGateway.onStatus
 userIds	src/chat/chat.service.ts	/^    const receiverId = userIds[0] === userId ? userIds[1] : userIds[0];$/;"	C	method:ChatService.create

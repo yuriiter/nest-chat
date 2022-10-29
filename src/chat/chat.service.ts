@@ -133,7 +133,7 @@ export class ChatService {
       throw new BadRequestException("Invalid parameters");
     }
 
-    return await this.prismaService.message.findMany({
+    const messages = await this.prismaService.message.findMany({
       where: {
         chatId: chatId,
       },
@@ -143,6 +143,8 @@ export class ChatService {
         sentDateTime: "desc",
       },
     });
+
+    return messages.reverse();
   }
 
   async getUserChats(userId: number) {
@@ -161,6 +163,10 @@ export class ChatService {
               },
             },
             messages: {
+              orderBy: {
+                sentDateTime: "desc",
+              },
+              take: 1,
               select: {
                 id: true,
                 sentDateTime: true,
@@ -195,6 +201,8 @@ export class ChatService {
         return false;
       }
 
+      await this.lastOnline(user.id);
+
       socket.join(`room_${user.id}`);
 
       return true;
@@ -202,5 +210,16 @@ export class ChatService {
       console.log(ex);
       return false;
     }
+  }
+
+  async lastOnline(userId) {
+    await this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        lastOnline: new Date(),
+      },
+    });
   }
 }

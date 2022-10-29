@@ -21,9 +21,7 @@ import Status from "../types/status";
     origin: ["http://localhost:3000"],
   },
 })
-export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayConnection
-{
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
   constructor(
     private messageService: MessageService,
     private prismaService: PrismaService,
@@ -125,6 +123,34 @@ export class ChatGateway
     if (!(await this.chatService.joinRoom(bearerToken, socket))) {
       socket.on("forceDisconnect", function () {
         socket.disconnect();
+      });
+    }
+    const { userId } = socket;
+    const userChats = await this.chatService.getUserChats(userId);
+    for (const userChat of userChats) {
+      userChat.users.forEach((user) => {
+        if (user.id !== userId) {
+          const receiverId = user.id;
+          this.server
+            .to(`room_${receiverId}`)
+            .emit("statusOfUsers", { status: "ONLINE", userId: userId });
+        }
+      });
+    }
+  }
+
+  async handleDisconnect(socket: any) {
+    const { userId } = socket;
+    const userChats = await this.chatService.getUserChats(userId);
+    await this.chatService.lastOnline(userId);
+    for (const userChat of userChats) {
+      userChat.users.forEach((user) => {
+        if (user.id !== userId) {
+          const receiverId = user.id;
+          this.server
+            .to(`room_${receiverId}`)
+            .emit("statusOfUsers", { status: "LAST_ONLINE", userId: userId });
+        }
       });
     }
   }
