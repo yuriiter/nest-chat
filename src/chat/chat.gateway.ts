@@ -14,6 +14,9 @@ import { MessageService } from "../message/message.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { ChatService } from "./chat.service";
 import Status from "../types/status";
+import { UserService } from "src/user/user.service";
+import * as jwt from "jsonwebtoken";
+import { ConfigService } from "@nestjs/config";
 
 @UseGuards(WsGuard)
 @WebSocketGateway({
@@ -25,6 +28,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
   constructor(
     private messageService: MessageService,
     private prismaService: PrismaService,
+    private configService: ConfigService,
+    private userService: UserService,
     private chatService: ChatService
   ) {}
 
@@ -101,17 +106,37 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
   }
 
   @SubscribeMessage("newStatus")
-  async changeStatus(
-    @MessageBody() statusDto: { status: Status; userId: number }
-  ) {
-    const { userId } = statusDto;
-    const userChats = await this.chatService.getUserChats(userId);
-    for (const userChat of userChats) {
-      userChat.users.forEach((user) => {
-        if (user.id !== userId) {
-          const receiverId = user.id;
-          this.server.to(`room_${receiverId}`).emit("statusOfUsers", statusDto);
-        }
+  async changeStatus(@MessageBody() statusDto: any) {
+    // TODO: now it sends status to all chats instead of sending it only to one
+    const { userId, receiverId } = statusDto;
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        chats: {
+          select: {
+            id: true,
+            users: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const chat = user.chats.find(
+      (chat) =>
+        chat.users[0].id === receiverId || chat.users[1].id === receiverId
+    );
+    if (chat) {
+      this.server.to(`room_${receiverId}`).emit("statusOfUsers", {
+        newStatus: statusDto.newStatus,
+        userId: userId,
+        chatId: chat.id,
       });
     }
   }
@@ -125,35 +150,49 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
         socket.disconnect();
       });
     }
-    const { userId } = socket;
-    const userChats = await this.chatService.getUserChats(userId);
+    const decoded = jwt.verify(
+      bearerToken,
+      this.configService.get("JWT_SECRET")
+    ) as any;
+
+    const userId = decoded.sub;
+
+    const userChats = await this.chatService.getUserChats(+userId);
     for (const userChat of userChats) {
       userChat.users.forEach((user) => {
         if (user.id !== userId) {
           const receiverId = user.id;
-          this.server
-            .to(`room_${receiverId}`)
-            .emit("statusOfUsers", { status: "ONLINE", userId: userId });
+          this.server.to(`room_${receiverId}`).emit("statusOfUsers", {
+            newStatus: "ONLINE",
+            userId: userId,
+            chatId: userChat.id,
+          });
         }
       });
     }
   }
 
   async handleDisconnect(socket: any) {
-    const { userId } = socket;
-    const userChats = await this.chatService.getUserChats(userId);
+    const bearerToken = socket.handshake.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(
+      bearerToken,
+      this.configService.get("JWT_SECRET")
+    ) as any;
+
+    const userId = decoded.sub;
+    const userChats = await this.chatService.getUserChats(+userId);
     await this.chatService.lastOnline(userId);
     for (const userChat of userChats) {
       userChat.users.forEach((user) => {
         if (user.id !== userId) {
           const receiverId = user.id;
-          this.server
-            .to(`room_${receiverId}`)
-            .emit("statusOfUsers", { status: "LAST_ONLINE", userId: userId });
+          this.server.to(`room_${receiverId}`).emit("statusOfUsers", {
+            newStatus: "LAST_ONLINE",
+            userId: userId,
+            chatId: userChat.id,
+          });
         }
       });
     }
   }
 }
-
-// TODO: create an initialization event, sending user id to the server

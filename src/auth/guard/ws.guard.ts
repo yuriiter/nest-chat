@@ -16,14 +16,14 @@ export class WsGuard implements CanActivate {
     const bearerToken =
       context.args[0].handshake.headers.authorization.split(" ")[1];
     try {
-      const clientSocketId = context.args[0].client.id;
+      /* const clientSocketId = context.args[0].client.id; */
       const decoded = jwt.verify(
         bearerToken,
         this.configService.get("JWT_SECRET")
       ) as any;
 
       context.switchToWs().getData().userId = decoded.sub;
-      context.switchToWs().getData().socketId = context.args[0].client.id;
+      /* context.switchToWs().getData().socketId = context.args[0].client.id; */
 
       return await this.userService.validateUser(decoded);
     } catch (ex) {

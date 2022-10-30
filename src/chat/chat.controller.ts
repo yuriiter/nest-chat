@@ -25,7 +25,7 @@ export class ChatController {
 
   @Get()
   getUserChats(@Req() req: Request) {
-    return this.chatService.getUserChats(req.user.id);
+    return this.chatService.getUserChats(+req.user.id);
   }
 
   @Get(":id/messages?")
