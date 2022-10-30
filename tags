@@ -93,6 +93,7 @@ create	src/chat/chat.service.ts	/^  async create(createChatDto: CreateChatDto, u
 create	src/message/message.controller.ts	/^  create(@Body() createMessageDto: CreateMessageDto, @Req() req: Request) {$/;"	m	class:MessageController
 create	src/message/message.service.ts	/^  async create(createMessageDto: CreateMessageDto, userId: number) {$/;"	m	class:MessageService
 data	src/auth/auth.service.ts	/^    const data = {$/;"	C	method:AuthService.signToken
+dateOnline	src/chat/chat.service.ts	/^      const dateOnline = new Date();$/;"	C	method:ChatService.joinRoom
 decoded	src/auth/guard/ws.guard.ts	/^      const decoded = jwt.verify($/;"	C	method:WsGuard.canActivate
 decoded	src/chat/chat.gateway.ts	/^    const decoded = jwt.verify($/;"	C	method:ChatGateway.handleConnection
 decoded	src/chat/chat.gateway.ts	/^    const decoded = jwt.verify($/;"	C	method:ChatGateway.handleDisconnect
@@ -130,7 +131,7 @@ isRead	prisma/migrations/20221003221536_init/migration.sql	/^    "isRead" BOOLEA
 joinRoom	src/chat/chat.service.ts	/^  async joinRoom(bearerToken: string, socket: Socket) {$/;"	m	class:ChatService
 jwtService	src/auth/auth.service.ts	/^    private jwtService: JwtService,$/;"	p	class:AuthService
 lastOnline	prisma/migrations/20221003221536_init/migration.sql	/^    "lastOnline" TIMESTAMP(3) NOT NULL,$/;"	E	table:User
-lastOnline	src/chat/chat.service.ts	/^  async lastOnline(userId) {$/;"	m	class:ChatService
+lastOnline	src/chat/chat.service.ts	/^  async lastOnline(userId: number, date: Date) {$/;"	m	class:ChatService
 messageContent	src/message/dto/create-message.dto.ts	/^  messageContent: string;$/;"	p	class:CreateMessageDto
 messageService	src/chat/chat.gateway.ts	/^    private messageService: MessageService,$/;"	p	class:ChatGateway
 messageService	src/message/message.controller.ts	/^  constructor(private readonly messageService: MessageService) {}$/;"	p	class:MessageController

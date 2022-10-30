@@ -181,7 +181,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
 
     const userId = decoded.sub;
     const userChats = await this.chatService.getUserChats(+userId);
-    await this.chatService.lastOnline(userId);
+    await this.chatService.lastOnline(userId, new Date());
     for (const userChat of userChats) {
       userChat.users.forEach((user) => {
         if (user.id !== userId) {

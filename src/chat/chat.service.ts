@@ -201,7 +201,10 @@ export class ChatService {
         return false;
       }
 
-      await this.lastOnline(user.id);
+      const dateOnline = new Date();
+      dateOnline.setDate(dateOnline.getDate() + 1000);
+
+      await this.lastOnline(user.id, dateOnline);
 
       socket.join(`room_${user.id}`);
 
@@ -212,13 +215,13 @@ export class ChatService {
     }
   }
 
-  async lastOnline(userId) {
+  async lastOnline(userId: number, date: Date) {
     await this.prismaService.user.update({
       where: {
         id: userId,
       },
       data: {
-        lastOnline: new Date(),
+        lastOnline: date,
       },
     });
   }
