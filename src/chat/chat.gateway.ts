@@ -105,9 +105,57 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
       .emit("onMessage", newMessage);
   }
 
+  @SubscribeMessage("readChat")
+  async readChat(@MessageBody() statusDto: any) {
+    const { userId, chatId } = statusDto;
+
+    const chat = await this.prismaService.chat.findUnique({
+      where: {
+        id: chatId,
+      },
+      include: {
+        users: true,
+      },
+    });
+
+    if (!chat) {
+      return;
+    }
+    let userIdx;
+    let receiverId;
+    if (chat.users[0].id === userId) {
+      userIdx = 0;
+      receiverId = chat.users[1].id;
+    } else if (chat.users[1].id === userId) {
+      userIdx = 1;
+      receiverId = chat.users[0].id;
+    } else {
+      return;
+    }
+
+    const countOfNewMessagesToUsers = chat.countOfNewMessagesToUsers;
+    countOfNewMessagesToUsers[userIdx] = 0;
+    await this.prismaService.chat.update({
+      where: {
+        id: chatId,
+      },
+      data: {
+        countOfNewMessagesToUsers: countOfNewMessagesToUsers,
+      },
+    });
+
+    this.server.to(`room_${receiverId}`).emit("readMessages", {
+      chatId: chatId,
+      countOfNewMessagesToUsers: countOfNewMessagesToUsers,
+    });
+    this.server.to(`room_${userId}`).emit("readMessages", {
+      chatId: chatId,
+      countOfNewMessagesToUsers: countOfNewMessagesToUsers,
+    });
+  }
+
   @SubscribeMessage("newStatus")
   async changeStatus(@MessageBody() statusDto: any) {
-    // TODO: now it sends status to all chats instead of sending it only to one
     const { userId, receiverId } = statusDto;
 
     const user = await this.prismaService.user.findUnique({

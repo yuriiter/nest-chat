@@ -64,9 +64,11 @@ bearerToken	src/chat/chat.gateway.ts	/^    const bearerToken = socket.handshake.
 bootstrap	src/main.ts	/^async function bootstrap() {$/;"	f
 canActivate	src/auth/guard/ws.guard.ts	/^  async canActivate(context: any): Promise<any> {$/;"	m	class:WsGuard
 changeStatus	src/chat/chat.gateway.ts	/^  async changeStatus(@MessageBody() statusDto: any) {$/;"	m	class:ChatGateway
+chat	src/chat/chat.gateway.ts	/^    const chat = await this.prismaService.chat.findUnique({$/;"	C	method:ChatGateway.readChat
 chat	src/chat/chat.gateway.ts	/^    const chat = user.chats.find($/;"	C	method:ChatGateway.changeStatus
 chat	src/chat/chat.service.ts	/^    const chat = await this.prismaService.chat.findUnique({$/;"	C	method:ChatService.getMessages
 chatId	prisma/migrations/20221003221536_init/migration.sql	/^    "chatId" INTEGER NOT NULL,$/;"	E	table:Message
+chatId	src/chat/chat.gateway.ts	/^    const { userId, chatId } = statusDto;$/;"	C	method:ChatGateway.readChat
 chatId	src/message/dto/create-message.dto.ts	/^  chatId: number;$/;"	p	class:CreateMessageDto
 chatService	src/chat/chat.controller.ts	/^  constructor(private chatService: ChatService) {}$/;"	p	class:ChatController
 chatService	src/chat/chat.gateway.ts	/^    private chatService: ChatService$/;"	p	class:ChatGateway
@@ -87,6 +89,7 @@ constructor	src/message/message.service.ts	/^  constructor(private prismaService
 constructor	src/prisma/prisma.service.ts	/^  constructor(private configService: ConfigService) {$/;"	m	class:PrismaService
 constructor	src/user/user.controller.ts	/^  constructor(private userService: UserService) {}$/;"	m	class:UserController
 constructor	src/user/user.service.ts	/^  constructor(private prismaService: PrismaService) {}$/;"	m	class:UserService
+countOfNewMessagesToUsers	src/chat/chat.gateway.ts	/^    const countOfNewMessagesToUsers = chat.countOfNewMessagesToUsers;$/;"	C	method:ChatGateway.readChat
 countOfNewMessagesToUsers	src/message/message.service.ts	/^      const { users, countOfNewMessagesToUsers } =$/;"	C	method:MessageService.create
 create	src/chat/chat.controller.ts	/^  create(@Req() req: Request, @Body() createChatDto: CreateChatDto) {$/;"	m	class:ChatController
 create	src/chat/chat.service.ts	/^  async create(createChatDto: CreateChatDto, userId: number) {$/;"	m	class:ChatService
@@ -155,6 +158,7 @@ prismaService	src/chat/chat.gateway.ts	/^    private prismaService: PrismaServic
 prismaService	src/chat/chat.service.ts	/^    private prismaService: PrismaService,$/;"	p	class:ChatService
 prismaService	src/message/message.service.ts	/^  constructor(private prismaService: PrismaService) {}$/;"	p	class:MessageService
 prismaService	src/user/user.service.ts	/^  constructor(private prismaService: PrismaService) {}$/;"	p	class:UserService
+readChat	src/chat/chat.gateway.ts	/^  async readChat(@MessageBody() statusDto: any) {$/;"	m	class:ChatGateway
 receiver	src/chat/chat.service.ts	/^    const receiver = await this.prismaService.user.findUnique({$/;"	C	method:ChatService.create
 receiverId	prisma/migrations/20221003221536_init/migration.sql	/^    "receiverId" INTEGER NOT NULL,$/;"	E	table:Message
 receiverId	src/chat/chat.gateway.ts	/^          const receiverId = user.id;$/;"	C	method:ChatGateway.handleConnection
@@ -192,6 +196,7 @@ userChats	src/chat/chat.gateway.ts	/^    const userChats = await this.chatServic
 userChats	src/chat/chat.service.ts	/^    const userChats = await this.prismaService.user.findUnique({$/;"	C	method:ChatService.getUserChats
 userId	src/chat/chat.gateway.ts	/^    const userId = decoded.sub;$/;"	C	method:ChatGateway.handleConnection
 userId	src/chat/chat.gateway.ts	/^    const userId = decoded.sub;$/;"	C	method:ChatGateway.handleDisconnect
+userId	src/chat/chat.gateway.ts	/^    const { userId, chatId } = statusDto;$/;"	C	method:ChatGateway.readChat
 userId	src/chat/chat.gateway.ts	/^    const { userId, receiverId } = statusDto;$/;"	C	method:ChatGateway.changeStatus
 userId	src/chat/chat.gateway.ts	/^    const { userId, socketId } = createMessageDto;$/;"	C	method:ChatGateway.onStatus
 userIds	src/chat/chat.service.ts	/^    const receiverId = userIds[0] === userId ? userIds[1] : userIds[0];$/;"	C	method:ChatService.create
