@@ -49,6 +49,7 @@ export class MessageService {
         },
       });
 
+      /* console.log() */
       return newMessage;
     } catch (err) {
       throw new BadRequestException("Invalid parameters");

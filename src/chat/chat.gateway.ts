@@ -29,56 +29,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
     private messageService: MessageService,
     private prismaService: PrismaService,
     private configService: ConfigService,
-    private userService: UserService,
     private chatService: ChatService
   ) {}
 
   @WebSocketServer()
   server: Server;
-
-  @SubscribeMessage("status")
-  async onStatus(
-    @MessageBody()
-    createMessageDto: any
-  ) {
-    const { userId, socketId } = createMessageDto;
-    const receiverUser = await this.prismaService.user.findUnique({
-      where: {
-        id: createMessageDto.receiverId,
-      },
-      select: {
-        socketIds: true,
-      },
-    });
-    if (!receiverUser) {
-      throw new WsException("User not found");
-    }
-
-    const { socketIds } = receiverUser;
-
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    socketIds.push(socketId);
-
-    await this.prismaService.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        socketIds: socketIds,
-      },
-    });
-
-    this.server
-      .to(socketIds)
-      .emit(
-        "onStatus",
-        this.messageService.create(createMessageDto, createMessageDto.userId)
-      );
-  }
 
   @SubscribeMessage("newMessage")
   async onNewMessage(
