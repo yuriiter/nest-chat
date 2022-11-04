@@ -1,3 +1,4 @@
+import { Response } from "express";
 import {
   BadRequestException,
   ForbiddenException,
@@ -42,7 +43,7 @@ export class AuthService {
     }
   }
 
-  async signin(authDto: SignInDto): Promise<{ access_token: string }> {
+  async signin(authDto: SignInDto, response: Response): Promise<any> {
     const user = await this.prismaService.user.findUnique({
       where: {
         email: authDto.email,
@@ -57,9 +58,12 @@ export class AuthService {
     }
 
     const token = await this.signToken(user.email, user.id);
-    return {
-      access_token: token,
-    };
+    response.cookie("jwt", token, {
+      expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
+      httpOnly: true,
+      domain: "localhost",
+    });
+    return response.send({ id: user.id, email: user.email });
   }
 
   signToken(email: string, userId: number) {
@@ -68,8 +72,7 @@ export class AuthService {
       email,
     };
     return this.jwtService.signAsync(data, {
-      // TODO set 15m
-      expiresIn: "10000m",
+      expiresIn: "7d",
       secret: this.configService.get("JWT_SECRET"),
     });
   }

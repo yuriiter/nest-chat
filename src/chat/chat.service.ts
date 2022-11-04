@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateChatDto } from "./dto/create-chat.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { Chat } from "@prisma/client";
@@ -174,12 +178,19 @@ export class ChatService {
                 messageContent: true,
                 receiverId: true,
                 authorId: true,
+                fileName: true,
+                fileSize: true,
+                fileActualName: true,
               },
             },
           },
         },
       },
     });
+
+    if (!userChats) {
+      throw new NotFoundException();
+    }
 
     const nonEmptyChats = userChats.chats.filter(
       (chat) => chat.messages.length > 0

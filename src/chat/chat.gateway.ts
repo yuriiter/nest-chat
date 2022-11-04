@@ -22,6 +22,7 @@ import { ConfigService } from "@nestjs/config";
 @WebSocketGateway({
   cors: {
     origin: ["http://localhost:3000"],
+    credentials: true,
   },
 })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
@@ -57,7 +58,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
     this.server.to(`room_${receiverUser.id}`).emit("onMessage", newMessage);
     this.server
       .to(`room_${createMessageDto.userId}`)
-      .emit("onMessage", newMessage);
+      .emit("onMessageBack", newMessage);
   }
 
   @SubscribeMessage("readChat")
@@ -147,36 +148,108 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
   afterInit(server: any): any {}
 
   async handleConnection(socket: any) {
-    const bearerToken = socket.handshake.headers.authorization.split(" ")[1];
-    if (!(await this.chatService.joinRoom(bearerToken, socket))) {
+    try {
+      if (!socket.handshake.headers.cookie) {
+        socket.on("forceDisconnect", function () {
+          socket.disconnect();
+        });
+        return;
+      }
+
+      const arrayOfCookies = socket.handshake.headers.cookie.split("; ");
+
+      if (arrayOfCookies.length < 0) {
+        socket.on("forceDisconnect", function () {
+          socket.disconnect();
+        });
+        return;
+      }
+
+      const jwtCookie = arrayOfCookies.find((cookie: string) =>
+        cookie.startsWith("jwt=")
+      );
+
+      if (!jwtCookie) {
+        socket.on("forceDisconnect", function () {
+          socket.disconnect();
+        });
+        return;
+      }
+
+      const bearerToken = jwtCookie.split("=")[1];
+
+      if (bearerToken.length === 0) {
+        socket.on("forceDisconnect", function () {
+          socket.disconnect();
+        });
+        return;
+      }
+
+      if (!(await this.chatService.joinRoom(bearerToken, socket))) {
+        socket.on("forceDisconnect", function () {
+          socket.disconnect();
+        });
+      }
+      const decoded = jwt.verify(
+        bearerToken,
+        this.configService.get("JWT_SECRET")
+      ) as any;
+
+      const userId = decoded.sub;
+
+      const userChats = await this.chatService.getUserChats(+userId);
+      for (const userChat of userChats) {
+        userChat.users.forEach((user) => {
+          if (user.id !== userId) {
+            const receiverId = user.id;
+            this.server.to(`room_${receiverId}`).emit("statusOfUsers", {
+              newStatus: "ONLINE",
+              userId: userId,
+              chatId: userChat.id,
+            });
+          }
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  async handleDisconnect(socket: any) {
+    if (!socket.handshake.headers.cookie) {
       socket.on("forceDisconnect", function () {
         socket.disconnect();
       });
+      return;
     }
-    const decoded = jwt.verify(
-      bearerToken,
-      this.configService.get("JWT_SECRET")
-    ) as any;
 
-    const userId = decoded.sub;
+    const arrayOfCookies = socket.handshake.headers.cookie.split("; ");
 
-    const userChats = await this.chatService.getUserChats(+userId);
-    for (const userChat of userChats) {
-      userChat.users.forEach((user) => {
-        if (user.id !== userId) {
-          const receiverId = user.id;
-          this.server.to(`room_${receiverId}`).emit("statusOfUsers", {
-            newStatus: "ONLINE",
-            userId: userId,
-            chatId: userChat.id,
-          });
-        }
+    if (arrayOfCookies.length < 0) {
+      socket.on("forceDisconnect", function () {
+        socket.disconnect();
       });
+      return;
     }
-  }
 
-  async handleDisconnect(socket: any) {
-    const bearerToken = socket.handshake.headers.authorization.split(" ")[1];
+    const jwtCookie = arrayOfCookies.find((cookie: string) =>
+      cookie.startsWith("jwt=")
+    );
+
+    if (!jwtCookie) {
+      socket.on("forceDisconnect", function () {
+        socket.disconnect();
+      });
+      return;
+    }
+
+    const bearerToken = jwtCookie.split("=")[1];
+
+    if (bearerToken.length === 0) {
+      socket.on("forceDisconnect", function () {
+        socket.disconnect();
+      });
+      return;
+    }
     const decoded = jwt.verify(
       bearerToken,
       this.configService.get("JWT_SECRET")

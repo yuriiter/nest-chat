@@ -32,7 +32,10 @@ model Message {
   chat           Chat        @relation(fields: [chatId], references: [id])
   chatId         Int
   messageType    MessageType
-  messageContent String
+  messageContent String?
+  fileActualName String?
+  fileSize       Int?
+  fileName       String?
 }
 
 model Chat {

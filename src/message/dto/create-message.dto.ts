@@ -1,5 +1,11 @@
 import { MessageType } from "@prisma/client";
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
 export class CreateMessageDto {
   @IsNumber()
@@ -13,5 +19,9 @@ export class CreateMessageDto {
 
   @IsNotEmpty()
   @IsString()
+  @IsOptional()
   messageContent: string;
+
+  @IsOptional()
+  file: { buffer: Buffer; name: string };
 }
