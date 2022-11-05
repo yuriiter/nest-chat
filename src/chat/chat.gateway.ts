@@ -8,13 +8,11 @@ import {
   WebSocketServer,
   WsException,
 } from "@nestjs/websockets";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { WsGuard } from "../auth/guard/ws.guard";
 import { MessageService } from "../message/message.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { ChatService } from "./chat.service";
-import Status from "../types/status";
-import { UserService } from "src/user/user.service";
 import * as jwt from "jsonwebtoken";
 import { ConfigService } from "@nestjs/config";
 
@@ -24,6 +22,7 @@ import { ConfigService } from "@nestjs/config";
     origin: ["http://localhost:3000"],
     credentials: true,
   },
+  maxHttpBufferSize: 1 * 1024 * 1024 * 10,
 })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
   constructor(
