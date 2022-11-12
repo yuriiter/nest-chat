@@ -83,6 +83,36 @@ export class MessageService {
             connect: { id: createMessageDto.chatId },
           },
         },
+        include: {
+          chat: {
+            include: {
+              users: {
+                select: {
+                  id: true,
+                  lastOnline: true,
+                  fullName: true,
+                },
+              },
+              messages: {
+                orderBy: {
+                  sentDateTime: "desc",
+                },
+                take: 1,
+                select: {
+                  id: true,
+                  sentDateTime: true,
+                  messageType: true,
+                  messageContent: true,
+                  receiverId: true,
+                  authorId: true,
+                  fileName: true,
+                  fileSize: true,
+                  fileActualName: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       const { users, countOfNewMessagesToUsers } =

@@ -169,6 +169,7 @@ newChat	src/chat/chat.service.ts	/^    const newChat: Chat = await this.prismaSe
 newMessage	src/chat/chat.gateway.ts	/^    const newMessage = await this.messageService.create($/;"	C	method:ChatGateway.onNewMessage
 newMessage	src/message/message.service.ts	/^      const newMessage = await this.prismaService.message.create({$/;"	C	method:MessageService.create
 onNewMessage	src/chat/chat.gateway.ts	/^  async onNewMessage($/;"	m	class:ChatGateway
+onlyEmptyParam	src/chat/chat.service.ts	/^    const onlyEmptyParam = typeof onlyEmpty === "undefined" ? true : onlyEmpty;$/;"	C	method:ChatService.getUserChats
 password	src/auth/dto/signIn.dto.ts	/^  password: string;$/;"	p	class:SignInDto
 password	src/auth/dto/signUp.dto.ts	/^  password: string;$/;"	p	class:SignUpDto
 passwordVerified	src/auth/auth.service.ts	/^    const passwordVerified = await argon.verify(user.hash, authDto.password);$/;"	C	method:AuthService.signin
@@ -203,6 +204,7 @@ skip	src/chat/chat.service.ts	/^    const skip = skip_ || 0;$/;"	C	method:ChatSe
 socketId	src/chat/chat.service.ts	/^      const socketId = socket.id;$/;"	C	method:ChatService.joinRoom
 take	src/chat/chat.service.ts	/^    const take = take_ || 15;$/;"	C	method:ChatService.getMessages
 token	src/auth/auth.service.ts	/^    const token = await this.signToken(user.email, user.id);$/;"	C	method:AuthService.signin
+true	src/chat/chat.service.ts	/^    const onlyEmptyParam = typeof onlyEmpty === "undefined" ? true : onlyEmpty;$/;"	C	method:ChatService.getUserChats
 user	src/auth/auth.service.ts	/^      const user = await this.prismaService.user.create({$/;"	C	method:AuthService.signup
 user	src/auth/auth.service.ts	/^    const user = await this.prismaService.user.findUnique({$/;"	C	method:AuthService.signin
 user	src/auth/guard/jwt.guard.ts	/^      const user = await this.userService.validateUser(decoded);$/;"	C	method:JwtGuard.validateRequest

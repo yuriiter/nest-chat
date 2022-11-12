@@ -149,7 +149,7 @@ export class ChatService {
   }
 
   async getUserChats(userId: number, onlyEmpty?: boolean) {
-    let onlyEmptyParam = typeof onlyEmpty === "undefined" ? true : onlyEmpty;
+    const onlyEmptyParam = typeof onlyEmpty === "undefined" ? true : onlyEmpty;
 
     const userChats = await this.prismaService.user.findUnique({
       where: {
