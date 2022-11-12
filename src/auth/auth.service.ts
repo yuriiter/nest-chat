@@ -72,7 +72,6 @@ export class AuthService {
       email,
     };
     return this.jwtService.signAsync(data, {
-      expiresIn: "7d",
       secret: this.configService.get("JWT_SECRET"),
     });
   }

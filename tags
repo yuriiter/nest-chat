@@ -11,7 +11,7 @@
 !_TAG_PROGRAM_VERSION	5.9.0	/acbd555b/
 2FdosMoPdokPnLeWgd4lesX8Y3t	.idea/workspace.xml	/^  <component name="ProjectId" id="2FdosMoPdokPnLeWgd4lesX8Y3t" \/>$/;"	i
 669b9a30-4dd6-4b3a-988b-530ba06ba739	.idea/workspace.xml	/^      <changelist id="669b9a30-4dd6-4b3a-988b-530ba06ba739" name="Changes" comment="" \/>$/;"	i
-669b9a30-4dd6-4b3a-988b-530ba06ba739	.idea/workspace.xml	/^    <list default="true" id="669b9a30-4dd6-4b3a-988b-530ba06ba739" name="Changes" comment="">$/;"	i
+669b9a30-4dd6-4b3a-988b-530ba06ba739	.idea/workspace.xml	/^    <list default="true" id="669b9a30-4dd6-4b3a-988b-530ba06ba739" name="Changes" comment="" \/>$/;"	i
 A	prisma/migrations/20221003221536_init/migration.sql	/^    "A" INTEGER NOT NULL,$/;"	E	table:_ChatToUser
 AppController	src/app.controller.ts	/^export class AppController {$/;"	c
 AppModule	src/app.module.ts	/^export class AppModule {}$/;"	c
@@ -138,7 +138,7 @@ getMessages	src/chat/chat.controller.ts	/^  getMessages($/;"	m	class:ChatControl
 getMessages	src/chat/chat.service.ts	/^  async getMessages($/;"	m	class:ChatService
 getUserByEmail	src/user/user.service.ts	/^  async getUserByEmail(email: string, enquiringUserId: number) {$/;"	m	class:UserService
 getUserChats	src/chat/chat.controller.ts	/^  getUserChats(@Req() req: Request) {$/;"	m	class:ChatController
-getUserChats	src/chat/chat.service.ts	/^  async getUserChats(userId: number) {$/;"	m	class:ChatService
+getUserChats	src/chat/chat.service.ts	/^  async getUserChats(userId: number, onlyEmpty?: boolean) {$/;"	m	class:ChatService
 handleConnection	src/chat/chat.gateway.ts	/^  async handleConnection(socket: any) {$/;"	m	class:ChatGateway
 handleDisconnect	src/chat/chat.gateway.ts	/^  async handleDisconnect(socket: any) {$/;"	m	class:ChatGateway
 hash	prisma/migrations/20221003221536_init/migration.sql	/^    "hash" TEXT NOT NULL,$/;"	E	table:User
@@ -165,10 +165,9 @@ messageService	src/message/message.controller.ts	/^  constructor(private readonl
 messageType	src/message/dto/create-message.dto.ts	/^  messageType: MessageType;$/;"	p	class:CreateMessageDto
 messages	src/chat/chat.service.ts	/^    const messages = await this.prismaService.message.findMany({$/;"	C	method:ChatService.getMessages
 moduleFixture	test/app.e2e-spec.ts	/^    const moduleFixture: TestingModule = await Test.createTestingModule({$/;"	C
-newChat	src/chat/chat.service.ts	/^    const newChat: Chat & { countOfUnread?: number } =$/;"	C	method:ChatService.create
+newChat	src/chat/chat.service.ts	/^    const newChat: Chat = await this.prismaService.chat.create({$/;"	C	method:ChatService.create
 newMessage	src/chat/chat.gateway.ts	/^    const newMessage = await this.messageService.create($/;"	C	method:ChatGateway.onNewMessage
 newMessage	src/message/message.service.ts	/^      const newMessage = await this.prismaService.message.create({$/;"	C	method:MessageService.create
-nonEmptyChats	src/chat/chat.service.ts	/^    const nonEmptyChats = userChats.chats.filter($/;"	C	method:ChatService.getUserChats
 onNewMessage	src/chat/chat.gateway.ts	/^  async onNewMessage($/;"	m	class:ChatGateway
 password	src/auth/dto/signIn.dto.ts	/^  password: string;$/;"	p	class:SignInDto
 password	src/auth/dto/signUp.dto.ts	/^  password: string;$/;"	p	class:SignUpDto
@@ -193,7 +192,7 @@ receiverId	src/message/dto/create-message.dto.ts	/^  receiverId: number;$/;"	p	c
 receiverUser	src/chat/chat.gateway.ts	/^    const receiverUser = await this.prismaService.user.findUnique({$/;"	C	method:ChatGateway.onNewMessage
 recordingPath	src/message/message.service.ts	/^const recordingPath: string = join($/;"	C
 request	src/auth/guard/jwt.guard.ts	/^    const request = context.switchToHttp().getRequest();$/;"	C	method:JwtGuard.canActivate
-returnedChat	src/chat/chat.service.ts	/^      const returnedChat: Chat & { countOfUnread?: number } =$/;"	C	method:ChatService.create
+returnedChat	src/chat/chat.service.ts	/^      const returnedChat: Chat = await this.prismaService.chat.findUnique({$/;"	C	method:ChatService.create
 searchedUser	src/user/user.service.ts	/^    const searchedUser = await this.prismaService.user.findUnique({$/;"	C	method:UserService.getUserByEmail
 sentDateTime	prisma/migrations/20221003221536_init/migration.sql	/^    "sentDateTime" TIMESTAMP(3) NOT NULL,$/;"	E	table:Message
 server	src/chat/chat.gateway.ts	/^  server: Server;$/;"	p	class:ChatGateway
@@ -214,8 +213,8 @@ user	src/user/user.service.ts	/^      const user: User = await this.prismaServic
 user	src/user/user.service.ts	/^    const user = await this.prismaService.user.findUnique({$/;"	C	method:UserService.validateUser
 userChat	src/chat/chat.gateway.ts	/^      for (const userChat of userChats) {$/;"	C	method:ChatGateway.handleConnection
 userChat	src/chat/chat.gateway.ts	/^    for (const userChat of userChats) {$/;"	C	method:ChatGateway.handleDisconnect
-userChats	src/chat/chat.gateway.ts	/^      const userChats = await this.chatService.getUserChats(+userId);$/;"	C	method:ChatGateway.handleConnection
-userChats	src/chat/chat.gateway.ts	/^    const userChats = await this.chatService.getUserChats(+userId);$/;"	C	method:ChatGateway.handleDisconnect
+userChats	src/chat/chat.gateway.ts	/^      const userChats = await this.chatService.getUserChats(+userId, false);$/;"	C	method:ChatGateway.handleConnection
+userChats	src/chat/chat.gateway.ts	/^    const userChats = await this.chatService.getUserChats(+userId, false);$/;"	C	method:ChatGateway.handleDisconnect
 userChats	src/chat/chat.service.ts	/^    const userChats = await this.prismaService.user.findUnique({$/;"	C	method:ChatService.getUserChats
 userId	src/chat/chat.gateway.ts	/^      const userId = decoded.sub;$/;"	C	method:ChatGateway.handleConnection
 userId	src/chat/chat.gateway.ts	/^    const userId = decoded.sub;$/;"	C	method:ChatGateway.handleDisconnect

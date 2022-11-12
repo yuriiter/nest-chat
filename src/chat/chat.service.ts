@@ -56,40 +56,9 @@ export class ChatService {
     });
 
     if (existingChat.length > 0) {
-      const returnedChat: Chat & { countOfUnread?: number } =
-        await this.prismaService.chat.findUnique({
-          where: {
-            id: existingChat[0].id,
-          },
-          include: {
-            users: {
-              select: {
-                id: true,
-                fullName: true,
-                email: true,
-                lastOnline: true,
-              },
-            },
-            messages: {
-              select: {
-                sentDateTime: true,
-                messageType: true,
-                messageContent: true,
-                receiverId: true,
-                authorId: true,
-              },
-            },
-          },
-        });
-      return returnedChat;
-    }
-
-    const newChat: Chat & { countOfUnread?: number } =
-      await this.prismaService.chat.create({
-        data: {
-          users: {
-            connect: [{ id: userIds[0] }, { id: userIds[1] }],
-          },
+      const returnedChat: Chat = await this.prismaService.chat.findUnique({
+        where: {
+          id: existingChat[0].id,
         },
         include: {
           users: {
@@ -100,10 +69,38 @@ export class ChatService {
               lastOnline: true,
             },
           },
-          messages: true,
+          messages: {
+            select: {
+              sentDateTime: true,
+              messageType: true,
+              messageContent: true,
+              receiverId: true,
+              authorId: true,
+            },
+          },
         },
       });
-    newChat.countOfUnread = 0;
+      return returnedChat;
+    }
+
+    const newChat: Chat = await this.prismaService.chat.create({
+      data: {
+        users: {
+          connect: [{ id: userIds[0] }, { id: userIds[1] }],
+        },
+      },
+      include: {
+        users: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            lastOnline: true,
+          },
+        },
+        messages: true,
+      },
+    });
 
     return newChat;
   }
@@ -151,7 +148,9 @@ export class ChatService {
     return messages.reverse();
   }
 
-  async getUserChats(userId: number) {
+  async getUserChats(userId: number, onlyEmpty?: boolean) {
+    let onlyEmptyParam = typeof onlyEmpty === "undefined" ? true : onlyEmpty;
+
     const userChats = await this.prismaService.user.findUnique({
       where: {
         id: userId,
@@ -192,10 +191,10 @@ export class ChatService {
       throw new NotFoundException();
     }
 
-    const nonEmptyChats = userChats.chats.filter(
-      (chat) => chat.messages.length > 0
-    );
-    return nonEmptyChats;
+    if (onlyEmptyParam) {
+      return userChats.chats.filter((chat) => chat.messages.length > 0);
+    }
+    return userChats.chats;
   }
 
   async joinRoom(bearerToken: string, socket: Socket) {

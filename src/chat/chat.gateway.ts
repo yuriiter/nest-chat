@@ -9,12 +9,13 @@ import {
   WsException,
 } from "@nestjs/websockets";
 import { Server } from "socket.io";
+import * as jwt from "jsonwebtoken";
+import { ConfigService } from "@nestjs/config";
+
 import { WsGuard } from "../auth/guard/ws.guard";
 import { MessageService } from "../message/message.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { ChatService } from "./chat.service";
-import * as jwt from "jsonwebtoken";
-import { ConfigService } from "@nestjs/config";
 
 @UseGuards(WsGuard)
 @WebSocketGateway({
@@ -196,7 +197,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
 
       const userId = decoded.sub;
 
-      const userChats = await this.chatService.getUserChats(+userId);
+      const userChats = await this.chatService.getUserChats(+userId, false);
       for (const userChat of userChats) {
         userChat.users.forEach((user) => {
           if (user.id !== userId) {
@@ -255,7 +256,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
     ) as any;
 
     const userId = decoded.sub;
-    const userChats = await this.chatService.getUserChats(+userId);
+    const userChats = await this.chatService.getUserChats(+userId, false);
     await this.chatService.lastOnline(userId, new Date());
     for (const userChat of userChats) {
       userChat.users.forEach((user) => {
