@@ -64,6 +64,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
   @SubscribeMessage("readChat")
   async readChat(@MessageBody() statusDto: any) {
     const { userId, chatId } = statusDto;
+    if (!chatId) {
+      return;
+    }
 
     const chat = await this.prismaService.chat.findUnique({
       where: {
